@@ -43,7 +43,7 @@ def flattenConfig(cfg) {
     def result = [:]
     cfg.each { k,v ->
         if (v instanceof java.lang.String
-        || instanceof Integer
+        || v instanceof Integer
         || v instanceof Double
         || v instanceof Boolean) {
             result.put(k,v)

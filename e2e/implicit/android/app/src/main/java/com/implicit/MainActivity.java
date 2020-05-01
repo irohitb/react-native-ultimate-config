@@ -1,6 +1,7 @@
 package com.implicit;
 
 import com.facebook.react.ReactActivity;
+import android.util.Log;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,5 +12,11 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "implicit";
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Log.d("onCreate", BuildConfig.PER_PLATFORM);
   }
 }

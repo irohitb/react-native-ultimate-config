@@ -3,31 +3,32 @@ name: test
 on: push
 
 jobs:
-  test-ios-basic-build:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn
-      - run: npm pack
-      - run: yarn
-        working-directory: e2e/basic
-      - run: yarn add ../../*.tgz
-        working-directory: e2e/basic
-      - run: pod install
-        working-directory: e2e/basic/ios
-      - run: yarn rnuc .env
-        working-directory: e2e/basic
-      - run: xcodebuild -workspace basic.xcworkspace -scheme basic -configuration Debug -sdk iphonesimulator -derivedDataPath build
-        working-directory: e2e/basic/ios
-      - run: ./scripts/assert-ios-plist.sh basic/ios basic "CFBundleDisplayName" "Basic Test"
-        working-directory: e2e
-      - run: ./scripts/assert-ios-plist.sh basic/ios basic "CFBundleIdentifier" "rnuc.basic"
-        working-directory: e2e
+  # test-ios-basic-build:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - run: yarn
+  #     - run: npm pack
+  #     - run: yarn
+  #       working-directory: e2e/basic
+  #     - run: yarn add ../../*.tgz
+  #       working-directory: e2e/basic
+  #     - run: pod install
+  #       working-directory: e2e/basic/ios
+  #     - run: yarn rnuc .env
+  #       working-directory: e2e/basic
+  #     - run: xcodebuild -workspace basic.xcworkspace -scheme basic -configuration Debug -sdk iphonesimulator -derivedDataPath build
+  #       working-directory: e2e/basic/ios
+  #     - run: ./scripts/assert-ios-plist.sh basic/ios basic "CFBundleDisplayName" "Basic Test"
+  #       working-directory: e2e
+  #     - run: ./scripts/assert-ios-plist.sh basic/ios basic "CFBundleIdentifier" "rnuc.basic"
+  #       working-directory: e2e
 
   test-android-basic-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: apt-get install -y libxml2-utils
       - run: yarn
       - run: npm pack
       - run: yarn
@@ -48,35 +49,36 @@ jobs:
           ./scripts/assert-android-r.sh basic/android/ debug com/basic BUNDLE_ID
         working-directory: e2e
 
-  test-ios-implicit-build:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn
-      - run: npm pack
-      - run: yarn
-        working-directory: e2e/implicit
-      - run: yarn add ../../*.tgz
-        working-directory: e2e/implicit
-      - run: pod install
-        working-directory: e2e/implicit/ios
-      - run: xcodebuild -workspace implicit.xcworkspace -scheme implicit-staging -configuration Debug -sdk iphonesimulator -derivedDataPath build
-        working-directory: e2e/implicit/ios
-      - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleDisplayName" "rnuc staging"
-        working-directory: e2e
-      - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleIdentifier" "rnuc.staging"
-        working-directory: e2e
-      - run: xcodebuild -workspace implicit.xcworkspace -scheme implicit-production -configuration Debug -sdk iphonesimulator -derivedDataPath build
-        working-directory: e2e/implicit/ios
-      - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleDisplayName" "rnuc production"
-        working-directory: e2e
-      - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleIdentifier" "rnuc.production"
-        working-directory: e2e
+  # test-ios-implicit-build:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - run: yarn
+  #     - run: npm pack
+  #     - run: yarn
+  #       working-directory: e2e/implicit
+  #     - run: yarn add ../../*.tgz
+  #       working-directory: e2e/implicit
+  #     - run: pod install
+  #       working-directory: e2e/implicit/ios
+  #     - run: xcodebuild -workspace implicit.xcworkspace -scheme implicit-staging -configuration Debug -sdk iphonesimulator -derivedDataPath build
+  #       working-directory: e2e/implicit/ios
+  #     - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleDisplayName" "rnuc staging"
+  #       working-directory: e2e
+  #     - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleIdentifier" "rnuc.staging"
+  #       working-directory: e2e
+  #     - run: xcodebuild -workspace implicit.xcworkspace -scheme implicit-production -configuration Debug -sdk iphonesimulator -derivedDataPath build
+  #       working-directory: e2e/implicit/ios
+  #     - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleDisplayName" "rnuc production"
+  #       working-directory: e2e
+  #     - run: ./scripts/assert-ios-plist.sh implicit/ios implicit "CFBundleIdentifier" "rnuc.production"
+  #       working-directory: e2e
 
   test-android-implicit-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: apt-get install -y libxml2-utils
       - run: yarn
       - run: npm pack
       - run: yarn
@@ -103,43 +105,44 @@ jobs:
           ./scripts/assert-android-resvalues.sh  implicit/android/ production/debug BUNDLE_ID "rnuc.production"
           ./scripts/assert-android-r.sh implicit/android/ productionDebug com/implicit BUNDLE_ID
         working-directory: e2e
-  test-ios-config:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: install dependencies - lib
-        run: yarn
-      - name: install dependencies - example
-        working-directory: example
-        run: yarn
-      - name: init env
-        working-directory: example
-        run: yarn rnuc .env.yaml
-      - name: pods (ios only)
-        working-directory: example/ios
-        run: pod install
-      # - name: print file
-      #   working-directory: example
-      #   run: cat node_modules/react-native-ultimate-config/ios/ConfigValues.h
-      - name: install detox stuff
-        run: |
-          brew tap wix/brew
-          brew install applesimutils
-          npm install -g detox
-      - name: build
-        working-directory: example
-        run: detox build --configuration ios.sim.release
-      - name: Test if config has been injected
-        working-directory: example/ios
-        run: |
-          /usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" build/Build/Products/Release-iphonesimulator/example.app/Info.plist 2>/dev/null | grep 'RNUC Demo'
-      - name: e2e test
-        working-directory: example
-        run: detox test --configuration ios.sim.release
+  # test-ios-config:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: install dependencies - lib
+  #       run: yarn
+  #     - name: install dependencies - example
+  #       working-directory: example
+  #       run: yarn
+  #     - name: init env
+  #       working-directory: example
+  #       run: yarn rnuc .env.yaml
+  #     - name: pods (ios only)
+  #       working-directory: example/ios
+  #       run: pod install
+  #     # - name: print file
+  #     #   working-directory: example
+  #     #   run: cat node_modules/react-native-ultimate-config/ios/ConfigValues.h
+  #     - name: install detox stuff
+  #       run: |
+  #         brew tap wix/brew
+  #         brew install applesimutils
+  #         npm install -g detox
+  #     - name: build
+  #       working-directory: example
+  #       run: detox build --configuration ios.sim.release
+  #     - name: Test if config has been injected
+  #       working-directory: example/ios
+  #       run: |
+  #         /usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" build/Build/Products/Release-iphonesimulator/example.app/Info.plist 2>/dev/null | grep 'RNUC Demo'
+  #     - name: e2e test
+  #       working-directory: example
+  #       run: detox test --configuration ios.sim.release
   test-android-config:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: apt-get install -y libxml2-utils
       - name: install dependencies - lib
         run: yarn
       - name: install dependencies - example

@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: apt-get install -y libxml2-utils
+      - run: xmllint
       - run: yarn
       - run: npm pack
       - run: yarn
@@ -79,6 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: apt-get install -y libxml2-utils
+      - run: xmllint
       - run: yarn
       - run: npm pack
       - run: yarn
@@ -143,6 +145,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: apt-get install -y libxml2-utils
+      - run: xmllint
       - name: install dependencies - lib
         run: yarn
       - name: install dependencies - example

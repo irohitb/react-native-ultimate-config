@@ -42,17 +42,20 @@ def buildRootConfig() {
 def flattenConfig(cfg) {
     def result = [:]
     cfg.each { k,v ->
-        if (v instanceof java.lang.String
+        if (
+            v instanceof java.lang.String
         || v instanceof Integer
         || v instanceof Double
-        || v instanceof Boolean) {
+        || v instanceof Boolean
+        ) {
             result.put(k,v)
-    } else {
-        def androidValue = v.get("android")
-        if (androidValue == null) {
-            throw new GradleException("key ${k} is missing android value")
+        } else {
+            def androidValue = v.get("android")
+            if (androidValue == null) {
+                throw new GradleException("key ${k} is missing android value")
+            }
+            result.put(k, v.get("android"))
         }
-        result.put(k, v.get("android"))
     }
     return result
 }

@@ -1,6 +1,7 @@
 package com.implicit;
 
 import com.facebook.react.ReactActivity;
+import android.os.Bundle;
 import android.util.Log;
 
 public class MainActivity extends ReactActivity {

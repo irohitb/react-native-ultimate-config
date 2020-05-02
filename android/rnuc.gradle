@@ -60,7 +60,7 @@ def flattenConfig(cfg) {
     return result
 }
 
-def rootConfig = flattenConfig(buildRootConfig())
+def rootConfig = buildRootConfig()
 println "Root config ${rootConfig}"
 
 def configPerFlavor(flavorName, rootConfig) {
@@ -81,7 +81,7 @@ android {
         println "processing variant ${variant.name}"
         def flavorName = variant.flavorName 
 
-        def cfg = configPerFlavor(flavorName, rootConfig)
+        def cfg = flattenConfig(configPerFlavor(flavorName, rootConfig))
         println "config per flavor ${flavorName} ${cfg}"
         def keySet = cfg.keySet().collect()
         println "all keys ${keySet}"
